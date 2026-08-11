@@ -8,19 +8,28 @@ pipeline {
                 git branch: 'main', url: 'https://github.com/Jayas-1998/maven_webapp.git'
             }
         }
-        stage('Build') {
+        stage('Log Start') {
             steps {
-                // Call the shared library step
-                buildWithMaven('clean install')
+                logMessage("Starting pipeline for Maven WebApp")
             }
         }
-        stage('Deploy') {
+        stage('Build with Maven') {
             steps {
-                script {
-                    org.example.Utils.printBanner("Deploying Artifact...")
-                    sh 'cp target/*.war /opt/tomcat/webapps/'
-                }
+                buildMaven('clean package')
             }
+        }
+        stage('Build Docker Image') {
+            steps {
+                buildDocker('maven-webapp:1.0.0')
+            }
+        }
+    }
+    post {
+        success {
+            logMessage("✅ Pipeline completed successfully")
+        }
+        failure {
+            logMessage("❌ Pipeline failed. Check logs.")
         }
     }
 }
