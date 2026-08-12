@@ -1,35 +1,45 @@
-@Library('my-shared-lib') _
+@Library('my-shared-lib@master') _
 
 pipeline {
     agent any
+
     stages {
+
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/Jayas-1998/maven_webapp.git'
+                git(
+                    branch: 'master',
+                    url: 'https://github.com/Jayas-1998/maven_webapp.git'
+                )
             }
         }
+
         stage('Log Start') {
             steps {
-                logMessage("Starting pipeline for Maven WebApp")
+                logMessage('Starting pipeline for Maven WebApp')
             }
         }
+
         stage('Build with Maven') {
             steps {
-                buildMaven('clean package')
+                BuildMaven('clean package')
             }
         }
+
         stage('Build Docker Image') {
             steps {
-                buildDocker('maven-webapp:1.0.0')
+                BuildDocker('maven-webapp:1.0.0')
             }
         }
     }
+
     post {
         success {
-            logMessage("✅ Pipeline completed successfully")
+            LogMessage('Pipeline completed successfully')
         }
+
         failure {
-            logMessage("❌ Pipeline failed. Check logs.")
+            echo 'Pipeline failed. Check logs.'
         }
     }
 }
