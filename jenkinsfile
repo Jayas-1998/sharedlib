@@ -2,44 +2,30 @@
 
 pipeline {
     agent any
-
     stages {
-
-        stage('Checkout') {
-            steps {
-                git(
-                    branch: 'master',
-                    url: 'https://github.com/Jayas-1998/maven_webapp.git'
-                )
-            }
-        }
-
         stage('Log Start') {
             steps {
-                logMessage('Starting pipeline for Maven WebApp')
+                logMessage("Starting pipeline for Maven WebApp")
             }
         }
-
         stage('Build with Maven') {
             steps {
-                BuildMaven('clean package')
+                buildMaven('clean package')
             }
         }
-
         stage('Build Docker Image') {
             steps {
-                BuildDocker('maven-webapp:1.0.0')
+                buildDocker('maven-webapp:1.0.0')
             }
         }
     }
-
     post {
         success {
-            LogMessage('Pipeline completed successfully')
+            logMessage("✅ Pipeline completed successfully")
         }
-
         failure {
-            echo 'Pipeline failed. Check logs.'
+            logMessage("❌ Pipeline failed. Check logs.")
         }
     }
 }
+
